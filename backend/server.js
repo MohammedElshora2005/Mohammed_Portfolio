@@ -9,6 +9,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ✅ Route للجذر (للتأكد من أن السيرفر يعمل)
+app.get('/', (req, res) => {
+  res.json({ message: '🚀 Backend is running!' });
+});
+
 // ✅ التحقق من المتغيرات
 console.log('📧 EMAIL_USER:', process.env.EMAIL_USER);
 console.log('🔑 EMAIL_PASS:', process.env.EMAIL_PASS ? '✅ Set' : '❌ Missing');
@@ -26,7 +31,6 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// ✅ التحقق من الاتصال
 transporter.verify((error, success) => {
   if (error) {
     console.error('❌ Gmail Connection Error:', error);
@@ -79,13 +83,12 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
-// ✅ ====== Proxy Route for Groq ChatBot API ======
+// ✅ Proxy Route for Groq ChatBot API
 app.post('/api/chat', async (req, res) => {
   const { messages } = req.body;
 
   console.log('🤖 Chat request received:', messages);
 
-  // ✅ خد الـ API Key من الـ environment variables
   const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
   if (!GROQ_API_KEY) {
